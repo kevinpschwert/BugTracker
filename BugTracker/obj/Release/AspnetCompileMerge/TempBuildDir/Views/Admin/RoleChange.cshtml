@@ -1,0 +1,70 @@
+﻿@model IEnumerable<BugTracker.Models.ApplicationUser>
+@*@{
+    ViewBag.Title = "RoleChange";
+}
+
+<h2>RoleChange</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="form-horizontal">
+        <h4>Ticket</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.Label("Assign", "Roles", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.ListBox("Roles", null, htmlAttributes: new { required = "required", @class = "form-control" })
+                @Html.ValidationMessage("Roles", "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Assign" class="btn btn-default" />
+            </div>
+        </div>
+}*@
+@foreach(var person in Model)
+{
+    <p>person.DisplayName</p>
+
+
+@*using (Html.BeginForm("RemoveFromProject", "Admin", new { id = person.Id }, FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.Label("User", "List of Users on Project", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.ListBox("User", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessage("User", "", new { @class = "text-danger" })
+        </div>
+    </div>
+                        <center><button type="submit">Remove From Project</button></center>
+}*@
+<br />
+<br />
+
+using (Html.BeginForm("AddToProjects", "Admin", new { id = person.Id }, FormMethod.Post))
+{
+
+    <div class="form-group">
+        @Html.Label("Assigned To User Id", "Assign User to Project", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.ListBox("Role", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessage("Role", "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+                        <center><button type="submit">Add To Project</button></center>
+}
+
+<div class="form-group">
+    @Html.Label("Assigned To User Id", "Assign User to Project", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.ListBox("Roles", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessage("Roles", "", new { @class = "text-danger" })
+    </div>
+</div>
+}

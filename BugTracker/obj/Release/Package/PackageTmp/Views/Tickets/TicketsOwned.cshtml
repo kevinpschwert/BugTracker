@@ -1,0 +1,12 @@
+﻿@model IEnumerable<BugTracker.Models.Ticket>
+
+@{
+    ViewBag.Title = "MyTables";
+}
+
+<h2>MyTables</h2>
+
+@foreach (var item in Model)
+{
+    <p>@item.Title</p>
+}

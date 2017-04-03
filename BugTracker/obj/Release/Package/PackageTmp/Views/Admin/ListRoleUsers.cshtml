@@ -1,0 +1,56 @@
+﻿@model IEnumerable<BugTracker.Models.ApplicationUser>
+@using Microsoft.AspNet.Identity
+@using BugTracker.Models
+@using BugTracker.Helper;
+
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Bob
+        </th>
+        <th>
+            @Html.DisplayName("Users On Project")
+        </th>
+
+    </tr>
+
+    @{
+            var uh = new UserRoleHelper();            
+    }
+    @foreach (var item in Model)
+    {
+        var userList = uh.UserInRole(item.Id);
+        <tr>
+            <td>
+                
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                
+
+            </td>
+            <td>
+                @using (Html.BeginForm("RoleChange", "Admin", new { id = item.Id }, FormMethod.Get ))
+                {
+                <button type="submit">Change</button>
+                 }
+            </td>
+            @foreach (var user in userList)
+            {
+                <td>
+                  @user.Roles
+                </td>
+            }
+            @*<td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>*@
+        </tr>
+        
+    }
+
+</table>

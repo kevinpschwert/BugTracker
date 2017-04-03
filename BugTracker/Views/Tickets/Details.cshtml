@@ -1,0 +1,726 @@
+﻿@model BugTracker.Models.Ticket
+
+@using Microsoft.AspNet.Identity
+@using BugTracker.Models
+@using BugTracker.Helper
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BugTracker</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link href="~/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" />
+    @*<link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">*@
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
+    <link rel="icon" type="image/png" href="~/img/favicon-32x32.png" sizes="32x32" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="../../index2.html" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>A</b>LT</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b>BugTracker</b></span>
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- Messages: style can be found in dropdown.less-->
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        <li class="dropdown notifications-menu">
+                            @{
+                                UserTicketHelper ut = new UserTicketHelper();
+                                ApplicationDbContext db = new ApplicationDbContext();
+                                var list = ut.ListTicketNotifications(User.Identity.GetUserId());
+                            }
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+                                <span class="label label-warning">@list.Count()</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                @*@{
+
+                                        var list = ut.ListTicketNotifications(User.Identity.GetUserId());
+                                    }*@
+
+                                @*@foreach (var note in Model.TicketNotification)
+                                    {
+
+                                        <li>@note.Description</li>
+                                        <li></li>
+                                    }*@
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+                                   
+                                </ul>
+                        </li>
+                        <li class="footer"><a href="#">View all</a></li>
+                    </ul>
+                    </li>
+                    <!-- Tasks: style can be found in dropdown.less -->
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            @if (Request.IsAuthenticated)
+                            {
+                                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <ul class="nav navbar-nav navbar-right">
+                                        <li>
+                                            @{
+                                                var manager = new UserManager<ApplicationUser>(new Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>(new ApplicationDbContext()));
+                                                var currentUser = manager.FindById(User.Identity.GetUserId());
+                                            }
+                                            @Html.ActionLink("Welcome " + currentUser.DisplayName + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+                                        </li>
+                                    </ul>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <ul class="nav navbar-nav navbar-right">
+                                                        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                                                        <li>@Html.ActionLink("Login", "LogMeIn", "Admin", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                                                    </ul>
+                                                }
+                        </a>
+                        <ul class="dropdown-menu">
+
+                            <!-- Menu Body -->
+                            <li class="user-body">
+                                <div class="row">
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Followers</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Sales</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Friends</a>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel -->
+                <!-- search form -->
+                <form action="#" method="get" class="sidebar-form">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+                <!-- /.search form -->
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu">
+                    <li class="header">MAIN NAVIGATION</li>
+                    
+                    <li><a href="@Url.Action("LandingPage", "Admin")"><i class="fa fa-book"></i> <span>Landing Page</span></a></li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>Projects</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="@Url.Action("MyProjects", "Projects")"><i class="fa fa-circle-o"></i>My Projects</a></li>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                            {
+                                <li><a href="@Url.Action("Index", "Projects")"><i class="fa fa-circle-o"></i>All Projects</a></li>
+                            }
+                        </ul>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="treeview">
+                            <a href="@Url.Action("ListRoles", "Admin")">
+                                <i class="fa fa-files-o"></i>
+                                <span>Roles</span>
+                                <span class="pull-right-container">
+                                    @*<i class="fa fa-angle-left pull-right"></i>*@
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-laptop"></i>
+                            <span>Tickets</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @if (User.IsInRole("Submitter") || User.IsInRole("Project Manager") || User.IsInRole("Developer"))
+                            {
+                                <li><a href="@Url.Action("MyTables", "Tickets")"><i class="fa fa-circle-o"></i>My Tickets</a></li>
+                            }
+                            <li><a href="@Url.Action("Tables", "Tickets")"><i class="fa fa-circle-o"></i>All Tickets</a></li>
+                        </ul>
+                    </li>                  
+            </section>
+
+            <!-- /.sidebar -->
+        </aside>
+       
+        <!-- /.content-wrapper -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-6">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Quick Example</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+
+                        <div class="content-wrapper" style="min-height: 0 !important;">
+                            <!-- Content Header (Page header) -->
+                            <section class="content-header">
+                                <h1>
+                                    Ticket Details
+                                </h1>
+
+                            </section>
+
+                            <div>
+
+                                <hr />
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        Assigned To:
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.AssignToUser.FirstName)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Owner:
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.OwnerUser.DisplayName)
+                                    </dd>
+
+                                    <dt>
+                                        Name of Project
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Project.Name)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Priority
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.TicketPriority.Name)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Status
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.TicketStatus.Name)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Type
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.TicketTypes.Name)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Title
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Title)
+                                    </dd>
+
+                                    <dt>
+                                        Ticket Desription
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Description)
+                                    </dd>
+
+                                    <dt>
+                                        Date Created
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Created)
+                                    </dd>
+
+                                    <dt>
+                                        Date Updated
+                                    </dt>
+
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Updated)
+                                    </dd>
+
+                                </dl>
+                            </div>
+                            <p>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal1">Edit Ticket</button>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal2">Add Attachment</button>
+                                @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                                @Html.ActionLink("Back to List", "Tables")*@
+                            </p>
+                            <div class="modal fade" id="myModal1" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+
+                                    @using (Html.BeginForm("Edit", "Tickets", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <div class="form-horizontal" id="test" style="background-color:#3c8dbc;width:500px;margin-left:30px;padding-left:30px;">
+                                            <h4>Ticket</h4>
+                                            <hr />
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(model => model.Id)
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.Label("Title", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @style = "margin-left:10px" }  })
+                                                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @style="margin-left:10px" } })
+                                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            @*<div class="form-group">
+                                                @Html.LabelFor(model => model.Created, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.EditorFor(model => model.Created, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Created, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>*@
+
+                                            @*<div class="form-group">
+                                                @Html.LabelFor(model => model.Updated, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.EditorFor(model => model.Updated, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Updated, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>*@
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.Label("Project", "Project", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                    @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.Label("Type", "Type", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.DropDownList("TicketTypesId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                    @Html.ValidationMessageFor(model => model.TicketTypesId, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.Label("Priority", "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.DropDownList("TicketPriorityId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                    @Html.ValidationMessageFor(model => model.TicketPriorityId, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                            {
+                                                <div class="form-group" style="width: 90%;">
+                                                    @Html.LabelFor(model => model.TicketStatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                    <div class="col-md-10">
+                                                        @Html.DropDownList("TicketStatusId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                        @Html.ValidationMessageFor(model => model.TicketStatusId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.LabelFor(model => model.OwnerUserId, "Owner", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.DropDownList("OwnerUserId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                    @Html.ValidationMessageFor(model => model.OwnerUserId, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.LabelFor(model => model.AssignToUserId, "Assigned", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.DropDownList("AssignToUserId", null, htmlAttributes: new { @class = "form-control", @style = "margin-left:10px" })
+                                                    @Html.ValidationMessageFor(model => model.AssignToUserId, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" value="Save" class="btn btn-info" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="myModal2" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+
+
+                                    @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data", id = Model.Id }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.HiddenFor(x => x.Id)
+                                        <div class="form-horizontal" id="test" style="background-color:#3c8dbc;width:450px;margin-left:30px;padding-left:30px;">
+                                            <h4>TicketAttachment</h4>
+                                            <hr />
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                            @*<div class="form-group">
+                                                    @Html.LabelFor(model => item.., "TicketId", htmlAttributes: new { @class = "control-label col-md-2" })
+                                                    <div class="col-md-10">
+                                                        @Html.DropDownList("TicketId", null, htmlAttributes: new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.TicketId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>*@
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @*@Html.LabelFor(model => model.FilePath, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                    <div class="col-md-10">
+                                                        @Html.EditorFor(model => model.FilePath, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.FilePath, "", new { @class = "text-danger" })*@
+                                                @*@Html.LabelFor(model => model.MediaURL, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                                                <label class="control-label col-md-2">Image</label>
+                                                <div class="col-md-10">
+                                                    @*@Html.EditorFor(model => model.MediaURL, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.MediaURL, "", new { @class = "text-danger" })*@
+                                                    @*<input name="image" type="file" class="form-control" required />*@
+                                                    <input name="image" type="file" class="form-control" style="margin-left:10px" id="fileUpload" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" style="width: 90%;">
+                                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                <div class="col-md-10">
+                                                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @style = "margin-left:10px" } })
+                                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" value="Create" class="btn btn-info" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+
+                                </div>
+                            </div>
+                            @*@if (User.IsInRole(Model.AssignToUserId == User.Identity.GetUserId()))
+                            {*@
+                            @using (Html.BeginForm("Created", "TicketComments", new { id = Model.Id }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <h3>Add Comment</h3>
+
+                                <textarea class="form-control" rows="5" id="Comment" name="Comment" style="height: 169px; width: 350px; margin: 0px;"></textarea>
+                                <button type="submit" class="btn btn-info">Submit</button>
+
+
+                            }
+
+
+                        </div>
+
+                    </div>
+                    <!-- /.box -->
+                    <!-- Form Element sizes -->
+
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-6">
+                    <!-- Horizontal Form -->
+                    @foreach (var item in Model.TicketComments.Reverse())
+                    {
+                        using (Html.BeginForm("Delete", "TicketComments", new { id = item.Id }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Comment</h3>
+                                </div>
+                                <ol class="breadcrumb">
+                                    <li>Created - @item.Created.Date</li>
+                                    <li>Submitted by - @item.User.FirstName</li>
+                                </ol>
+                                <!-- /.box-header -->
+                                <!-- form start -->
+                                @*<form class="form-horizontal">*@
+
+                                <div class="box-body">
+
+                                    @item.Comment
+
+                                </div>
+
+
+                                <!-- /.box-body -->
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-info" style="margin-left:8px;">Delete</button>
+                                </div>
+
+                                <!-- /.box-footer -->
+                                @*</form>*@
+
+                            </div>
+                        }
+                    }
+
+                    @foreach (var item in Model.TicketAttachments.Reverse())
+                    {
+                        <div class="box box-info">
+
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Attachment</h3>
+                            </div>
+                            <ol class="breadcrumb">
+                                <li>Created - @item.Created.Date</li>
+                                <li>Submitted by - @item.User.FirstName</li>
+                            </ol>
+                            @using (Html.BeginForm("Delete", "TicketAttachments", new { id = item.Id }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="box-body">
+                                    @if (Url.Content(item.FilePath).Contains(".png") || (Url.Content(item.FilePath).Contains(".jpg") || (Url.Content(item.FilePath).Contains(".jpeg") || (Url.Content(item.FilePath).Contains(".gif")))))
+                                    {
+                                        <a class="fa fa-picture-o" href="@Url.Content(item.FilePath)" target="_blank">@Url.Content(item.FilePath)</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="fa fa-file" href="@Url.Content(item.FilePath)" target="_blank">@Url.Content(item.FilePath)</a>
+                                    }
+                                    @*<img src="@Url.Content(item.FilePath)" />*@
+                                    <p>@item.Description</p>
+                                    <div class="box-footer">
+                                        <button type="submit" class="btn btn-info">Delete</button>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    }
+                    <!-- /.box -->
+                    <!-- general form elements disabled -->
+                    <!-- /.box -->
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </section>
+        </aside>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    TIcket History
+                </h1>
+
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- /.box -->
+                            <div class="box">
+                                <div class="box-header">
+
+
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <table id="example2" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Changed By</th>
+                                                <th>Property</th>
+                                                <th>Old Value</th>
+                                                <th>New Value</th>
+                                                <th>Date Changed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.TicketHistories)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(model => item.User.DisplayName)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(model => item.Property)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(model => item.OldValue)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(model => item.NewValue)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(model => item.Changed)
+                                                    </td>
+                                                </tr>
+                                            }                                          
+
+                                    </table>
+                                </div>
+                                <!-- /.box-body -->
+                            </div>
+                            <!-- /.box -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+        </div>
+        <!-- /.row -->
+        </section>
+
+
+
+        <!-- /.content -->
+    </div>
+
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 2.3.8
+        </div>
+        <strong>Kevin Schwert's BugTracker</strong>
+    </footer>
+    <!-- Control Sidebar -->
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery 2.2.3 -->
+    <script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="../../plugins/fastclick/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/app.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../dist/js/demo.js"></script>
+    <!-- page script -->
+    <script>
+  $(function () {
+    $("#example1").DataTable();
+    $('#example2').DataTable({
+      "order": [[ 4, "desc" ]],
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });
+  });
+    </script>
+</body>
+</html>
+

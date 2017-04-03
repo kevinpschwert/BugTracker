@@ -1,0 +1,88 @@
+﻿@model BugTracker.Models.Project
+@using BugTracker.Helper;
+
+
+@*@model IEnumerable<BugTracker.Models.Project>
+@using BugTracker.Helper;
+
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayName("Users On Project")
+        </th>
+
+    </tr>
+
+    @{
+        var ph = new UserProjectHelper();
+    }
+    @foreach (var item in Model)
+    {
+        var userList = ph.UserOnProject(item.Id);
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            @foreach (var user in userList)
+            {
+                <div class="form-group">
+                    @Html.Label("Role Names", "AssignProject", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.ListBox("AssignProject", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessage("AssignProject", "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            }
+        </tr>
+    }
+
+</table>*@
+
+@*<h2>Details</h2>
+
+    <div>
+        <h4>Project</h4>
+        <hr />
+        @foreach (var proj in Model)
+        {
+            @proj.Name
+
+            <div class="form-group">
+                @Html.Label("Role Names", "AssignProject", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.ListBox("AssignProject", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessage("AssignProject", "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+    </div>
+    <p>
+
+    </p>*@
+
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.Name)
+    </dt>
+</dl>
+<div class="form-group">
+    @Html.Label("Assigned To Project", "AssignedToProject", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.ListBox("AssignedToProject", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessage("AssignedToProject", "", new { @class = "text-danger" })
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<BugTracker.Models.Project>
+    @using BugTracker.Helper;
+
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayName("Users On Project")
+        </th>
+
+    </tr>
+
+    @{
+        var ph = new UserProjectHelper();
+    }
+    @foreach (var item in Model)
+    {
+        var userList = ph.UserOnProject(item.Id);
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            @foreach (var user in userList)
+            {
+            <td>
+                @user.FirstName @user.LastName
+            </td>
+            }
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
